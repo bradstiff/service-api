@@ -4,13 +4,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CalculatorServices.Data.Core
 {
-    public interface ICalculatorRepository
+    public interface ICalculatorRepository<T>
+        where T : BaseOperationAuditRecord, new()
     {
-        DbSet<AdditionAuditRecord> AdditionAudits { get; set; }
+        DbSet<T> Audits { get; set; }
 
-        DbSet<SubtractionAuditRecord> SubtractionAudits { get; set; }
-
-        Task<int> SaveChangesAsync(CancellationToken cancellationToken);
-
+        Task Add(T auditRecord);
     }
 }

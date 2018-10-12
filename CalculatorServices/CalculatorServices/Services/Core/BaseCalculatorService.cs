@@ -10,11 +10,11 @@ namespace CalculatorServices.Services.Core
     public abstract class BaseCalculatorService<T>
         where T : BaseOperationAuditRecord, new()
     {
-        protected ICalculatorRepository Repository { get; }
+        protected ICalculatorRepository<T> Repository { get; }
 
         protected IHistoryService HistoryService { get; }
 
-        protected BaseCalculatorService(ICalculatorRepository repository, IHistoryService historyService)
+        protected BaseCalculatorService(ICalculatorRepository<T> repository, IHistoryService historyService)
         {
             Repository = repository;
             HistoryService = historyService;
@@ -29,8 +29,6 @@ namespace CalculatorServices.Services.Core
         {
             await this.HistoryService.UpdateHistory(calculatorId, operation, newValue, cancellationToken);
         }
-
-        protected abstract DbSet<T> GetDbSet();
 
         protected async Task<CalculatorResultViewModel> Execute(Guid? id, Operations operation, decimal value,
             CancellationToken cancellationToken)
@@ -64,9 +62,7 @@ namespace CalculatorServices.Services.Core
 
         private async Task WriteToRepository(T auditRecord, CancellationToken cancellationToken)
         {
-            var dbSet = GetDbSet();
-            await dbSet.AddAsync(auditRecord, cancellationToken);
-            await Repository.SaveChangesAsync(cancellationToken);
+            await this.Repository.Add(auditRecord);
         }
 
         private decimal CalculateResult(Operations operation, decimal oldValue, decimal value)

@@ -18,9 +18,9 @@ namespace CalculatorServices.Services
 
     public class SubtractionService : BaseCalculatorService<SubtractionAuditRecord>, ISubtractionService
     {
-        private readonly ICalculatorRepository _repository;
+        private readonly ICalculatorRepository<SubtractionAuditRecord> _repository;
 
-        public SubtractionService(ICalculatorRepository repository, IHistoryService historyService)
+        public SubtractionService(ICalculatorRepository<SubtractionAuditRecord> repository, IHistoryService historyService)
             :base(repository, historyService)
         {
             _repository = repository;
@@ -29,11 +29,6 @@ namespace CalculatorServices.Services
         public Task<CalculatorResultViewModel> Subtract(Guid? id, decimal value, CancellationToken cancellationToken)
         {
             return Execute(id, Operations.Subtraction, value, cancellationToken);
-        }
-
-        protected override DbSet<SubtractionAuditRecord> GetDbSet()
-        {
-            return _repository.SubtractionAudits;
         }
     }
 }

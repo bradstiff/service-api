@@ -31,9 +31,11 @@ namespace CalculatorServices
         {
             services
                 .AddEntityFrameworkInMemoryDatabase()
-                .AddDbContext<CalculatorRepository>(options => options.UseInMemoryDatabase("CalculatorServices"));
+                .AddDbContext<CalculatorRepository<AdditionAuditRecord>>(options => options.UseInMemoryDatabase("CalculatorServices"))
+                .AddDbContext<CalculatorRepository<SubtractionAuditRecord>>(options => options.UseInMemoryDatabase("CalculatorServices"));
 
-            services.AddScoped<ICalculatorRepository, CalculatorRepository>();
+            services.AddScoped<ICalculatorRepository<AdditionAuditRecord>, CalculatorRepository<AdditionAuditRecord>>();
+            services.AddScoped<ICalculatorRepository<SubtractionAuditRecord>, CalculatorRepository<SubtractionAuditRecord>>();
             services.AddScoped<IAdditionService, AdditionService>();
             services.AddScoped<ISubtractionService, SubtractionService>();
             services.AddScoped<IHistoryService, HistoryService>();
