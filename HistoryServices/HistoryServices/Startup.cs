@@ -2,20 +2,21 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using CalculatorServices.Data;
-using CalculatorServices.Data.Core;
-using CalculatorServices.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.EntityFrameworkCore;
 
-namespace CalculatorServices
+using HistoryServices.Data;
+using HistoryServices.Data.Core;
+using HistoryServices.Services;
+
+namespace HistoryServices
 {
     public class Startup
     {
@@ -31,13 +32,11 @@ namespace CalculatorServices
         {
             services
                 .AddEntityFrameworkInMemoryDatabase()
-                .AddDbContext<CalculatorRepository>(options => options.UseInMemoryDatabase("CalculatorServices"));
+                .AddDbContext<HistoryRepository>(options => options.UseInMemoryDatabase("HistoryServices"));
 
-            services.AddScoped<ICalculatorRepository, CalculatorRepository>();
-            services.AddScoped<IAdditionService, AdditionService>();
-            services.AddScoped<ISubtractionService, SubtractionService>();
+            services.AddScoped<IHistoryRepository, HistoryRepository>();
             services.AddScoped<IHistoryService, HistoryService>();
-            services.AddSingleton<IConfiguration>(Configuration);
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
 

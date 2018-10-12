@@ -26,7 +26,7 @@ namespace CalculatorServices.Controllers
         }
 
         [HttpPost("add")]
-        public async Task<ActionResult<CalculatorResultViewModel>> Add(int? id, decimal? value, CancellationToken cancellationToken)
+        public async Task<ActionResult<CalculatorResultViewModel>> Add(Guid? id, decimal? value, CancellationToken cancellationToken)
         {
             if (!value.HasValue)
             {
@@ -37,7 +37,7 @@ namespace CalculatorServices.Controllers
         }
 
         [HttpPost("subtract")]
-        public async Task<ActionResult<CalculatorResultViewModel>> Subtract(int? id, decimal? value, CancellationToken cancellationToken)
+        public async Task<ActionResult<CalculatorResultViewModel>> Subtract(Guid? id, decimal? value, CancellationToken cancellationToken)
         {
             if (!value.HasValue)
             {
@@ -48,9 +48,9 @@ namespace CalculatorServices.Controllers
         }
 
         [HttpGet("history/{id}")]
-        public async Task<ActionResult<CalculatorHistoryViewModel>> History(int id, CancellationToken cancellationToken)
+        public async Task<ActionResult<CalculatorHistoryViewModel>> History(Guid id, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException("CalculatorController.History needs to be implemented using the service you build.");
+            return Ok(await _historyService.Get(id, cancellationToken));
         }
     }
 }

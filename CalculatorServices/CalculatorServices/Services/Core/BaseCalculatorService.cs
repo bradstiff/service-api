@@ -20,25 +20,29 @@ namespace CalculatorServices.Services.Core
             HistoryService = historyService;
         }
 
-        public async Task<decimal?> GetLatestValue(int calculatorId, CancellationToken cancellationToken)
+        public async Task<decimal?> GetLatestValue(Guid calculatorId, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException("Implement GetLatestValue using the HistoryService you wrote");
+            return (await this.HistoryService.GetLast(calculatorId, cancellationToken))?.NewValue;
         }
 
-        protected async Task<int> WriteToGlobalHistory(int? calculatorId, Operations operation, decimal value, decimal newValue, CancellationToken cancellationToken)
+        protected async Task WriteToGlobalHistory(Guid calculatorId, Operations operation, decimal newValue, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException("Implement WriteToGlobalHistory using the HistoryService you wrote");
+            await this.HistoryService.UpdateHistory(calculatorId, operation, newValue, cancellationToken);
         }
 
         protected abstract DbSet<T> GetDbSet();
 
-        protected async Task<CalculatorResultViewModel> Execute(int? id, Operations operation, decimal value,
+        protected async Task<CalculatorResultViewModel> Execute(Guid? id, Operations operation, decimal value,
             CancellationToken cancellationToken)
         {
             decimal oldValue = 0;
             if (id.HasValue)
             {
                 oldValue = (await GetLatestValue(id.Value, cancellationToken)).GetValueOrDefault(0);
+            }
+            else
+            {
+                id = Guid.NewGuid();
             }
 
             var result = CalculateResult(operation, oldValue, value);
@@ -55,7 +59,8 @@ namespace CalculatorServices.Services.Core
 
             await Repository.SaveChangesAsync(cancellationToken);
 
-            id = await WriteToGlobalHistory(id, operation, value, result, cancellationToken);
+            //id = await WriteToGlobalHistory(id, operation, value, result, cancellationToken);
+            await WriteToGlobalHistory(id.Value, operation, result, cancellationToken);
 
             return new CalculatorResultViewModel() { GlobalId = id.Value, Result = result };
         }

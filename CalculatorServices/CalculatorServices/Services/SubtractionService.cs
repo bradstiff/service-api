@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,7 +13,7 @@ namespace CalculatorServices.Services
 {
     public interface ISubtractionService
     {
-        Task<CalculatorResultViewModel> Subtract(int? id, decimal value, CancellationToken cancellationToken);
+        Task<CalculatorResultViewModel> Subtract(Guid? id, decimal value, CancellationToken cancellationToken);
     }
 
     public class SubtractionService : BaseCalculatorService<SubtractionAuditRecord>, ISubtractionService
@@ -25,7 +26,7 @@ namespace CalculatorServices.Services
             _repository = repository;
         }
 
-        public Task<CalculatorResultViewModel> Subtract(int? id, decimal value, CancellationToken cancellationToken)
+        public Task<CalculatorResultViewModel> Subtract(Guid? id, decimal value, CancellationToken cancellationToken)
         {
             return Execute(id, Operations.Subtraction, value, cancellationToken);
         }

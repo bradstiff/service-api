@@ -1,8 +1,10 @@
-﻿namespace CalculatorServices.ViewModels
+﻿using System;
+
+namespace CalculatorServices.ViewModels
 {
     public class CalculatorResultViewModel
     {
-        public int GlobalId { get; set; }
+        public Guid GlobalId { get; set; }
         public decimal Result { get; set; }
     }
 }

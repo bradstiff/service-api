@@ -13,7 +13,7 @@ namespace CalculatorServices.Services
 {
     public interface IAdditionService
     {
-        Task<CalculatorResultViewModel> Add(int? historyId, decimal vale, CancellationToken cancellationToken);
+        Task<CalculatorResultViewModel> Add(Guid? id, decimal vale, CancellationToken cancellationToken);
     }
 
     public class AdditionService : BaseCalculatorService<AdditionAuditRecord>, IAdditionService
@@ -26,9 +26,9 @@ namespace CalculatorServices.Services
             _repository = repository;
         }
 
-        public Task<CalculatorResultViewModel> Add(int? historyId, decimal value, CancellationToken cancellationToken)
+        public Task<CalculatorResultViewModel> Add(Guid? id, decimal value, CancellationToken cancellationToken)
         {
-            return Execute(historyId, Operations.Addition, value, cancellationToken);
+            return Execute(id, Operations.Addition, value, cancellationToken);
         }
 
         protected override DbSet<AdditionAuditRecord> GetDbSet()

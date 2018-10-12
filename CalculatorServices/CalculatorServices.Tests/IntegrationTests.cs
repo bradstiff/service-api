@@ -15,7 +15,7 @@ namespace CalculatorServices.Tests.Integration
     [TestClass]
     public class IntegrationTests
     {
-        private static readonly HttpClient _httpClient = new HttpClient() { BaseAddress = new Uri("https://localhost:44313/api/calculator/") };
+        private static readonly HttpClient _httpClient = new HttpClient() { BaseAddress = new Uri("https://localhost:44354/api/calculator/") };
 
         #region Addition
         [TestMethod]
@@ -156,7 +156,7 @@ namespace CalculatorServices.Tests.Integration
 
         #endregion
 
-        private static Task<HttpResponseMessage> Get(int? id)
+        private static Task<HttpResponseMessage> Get(Guid? id)
         {
             if (id.HasValue)
             {
@@ -166,7 +166,7 @@ namespace CalculatorServices.Tests.Integration
             return _httpClient.GetAsync($"history");
         }
 
-        private static Task<HttpResponseMessage> Post(Operations operation, int? id = null, decimal? value = null)
+        private static Task<HttpResponseMessage> Post(Operations operation, Guid? id = null, decimal? value = null)
         {
             var parameters = new Dictionary<string, string>();
 

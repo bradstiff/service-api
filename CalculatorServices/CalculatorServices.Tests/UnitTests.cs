@@ -27,17 +27,17 @@ namespace CalculatorServices.Tests
 
             var value = 5;
             historyServiceMock
-                .Setup(c => c.UpdateHistory(It.IsAny<int?>(), Operations.Addition, value, CancellationToken.None))
-                .ReturnsAsync(new HistoryDto() { CalculatorId = 1, NewValue = 5, OldValue = null, Operation = Operations.Addition });
+                .Setup(c => c.UpdateHistory(It.IsAny<Guid>(), Operations.Addition, value, CancellationToken.None))
+                .ReturnsAsync(new HistoryDto() { CalculatorId = Guid.NewGuid(), NewValue = 5, OldValue = null, Operation = Operations.Addition });
 
             var service = new AdditionService(repositoryMock.Object, historyServiceMock.Object);
             var result = await service.Add(null, value, CancellationToken.None);
 
             mockDbSet.Verify(c => c.AddAsync(It.IsAny<AdditionAuditRecord>(), CancellationToken.None), Times.Once);
-            historyServiceMock.Verify(c => c.Get(It.IsAny<int>(), CancellationToken.None), Times.Never);
+            historyServiceMock.Verify(c => c.GetLast(It.IsAny<Guid>(), CancellationToken.None), Times.Never);
 
             Assert.AreEqual(value, result.Result);
-            Assert.AreEqual(1, result.GlobalId);
+            Assert.AreNotEqual(result.GlobalId, default(Guid));
 
         }
 
@@ -50,12 +50,13 @@ namespace CalculatorServices.Tests
             var mockDbSet = new Mock<DbSet<AdditionAuditRecord>>();
             repositoryMock.Setup(c => c.AdditionAudits).Returns(mockDbSet.Object);
 
-            var id = 1;
+            var id = Guid.NewGuid();
             var value = 5;
             var expectedOutput = 15;
 
-            historyServiceMock.Setup(c => c.Get(id, CancellationToken.None)).ReturnsAsync(new List<HistoryDto>()
-                {new HistoryDto() {CalculatorId = id, OldValue = 0, NewValue = 10, Operation = Operations.Addition}});
+            historyServiceMock
+                .Setup(c => c.GetLast(id, CancellationToken.None))
+                .ReturnsAsync(new HistoryDto() {CalculatorId = id, OldValue = 0, NewValue = 10, Operation = Operations.Addition});
 
             historyServiceMock
                 .Setup(c => c.UpdateHistory(id, Operations.Addition, expectedOutput, CancellationToken.None))
@@ -63,13 +64,13 @@ namespace CalculatorServices.Tests
 
 
             var service = new AdditionService(repositoryMock.Object, historyServiceMock.Object);
-            var result = await service.Add(1, value, CancellationToken.None);
+            var result = await service.Add(id, value, CancellationToken.None);
 
             mockDbSet.Verify(c => c.AddAsync(It.IsAny<AdditionAuditRecord>(), CancellationToken.None), Times.Once);
-            historyServiceMock.Verify(c => c.Get(It.IsAny<int>(), CancellationToken.None), Times.Once);
+            historyServiceMock.Verify(c => c.GetLast(It.IsAny<Guid>(), CancellationToken.None), Times.Once);
 
             Assert.AreEqual(expectedOutput, result.Result);
-            Assert.AreEqual(1, result.GlobalId);
+            Assert.AreEqual(id, result.GlobalId);
 
         }
 
@@ -84,17 +85,17 @@ namespace CalculatorServices.Tests
 
             var value = 5;
             historyServiceMock
-                .Setup(c => c.UpdateHistory(It.IsAny<int?>(), Operations.Subtraction, -value, CancellationToken.None))
-                .ReturnsAsync(new HistoryDto() { CalculatorId = 1, NewValue = -value, OldValue = null, Operation = Operations.Subtraction });
+                .Setup(c => c.UpdateHistory(It.IsAny<Guid>(), Operations.Subtraction, -value, CancellationToken.None))
+                .ReturnsAsync(new HistoryDto() { CalculatorId = Guid.NewGuid(), NewValue = -value, OldValue = null, Operation = Operations.Subtraction });
 
             var service = new SubtractionService(repositoryMock.Object, historyServiceMock.Object);
             var result = await service.Subtract(null, value, CancellationToken.None);
 
             mockDbSet.Verify(c => c.AddAsync(It.IsAny<SubtractionAuditRecord>(), CancellationToken.None), Times.Once);
-            historyServiceMock.Verify(c => c.Get(It.IsAny<int>(), CancellationToken.None), Times.Never);
+            historyServiceMock.Verify(c => c.GetLast(It.IsAny<Guid>(), CancellationToken.None), Times.Never);
 
             Assert.AreEqual(-value, result.Result);
-            Assert.AreEqual(1, result.GlobalId);
+            Assert.AreNotEqual(result.GlobalId, default(Guid));
 
         }
 
@@ -107,12 +108,13 @@ namespace CalculatorServices.Tests
             var mockDbSet = new Mock<DbSet<SubtractionAuditRecord>>();
             repositoryMock.Setup(c => c.SubtractionAudits).Returns(mockDbSet.Object);
 
-            var id = 1;
+            var id = Guid.NewGuid();
             var value = 5;
             var expectedOutput = 5;
 
-            historyServiceMock.Setup(c => c.Get(id, CancellationToken.None)).ReturnsAsync(new List<HistoryDto>()
-                {new HistoryDto() {CalculatorId = id, OldValue = 0, NewValue = 10, Operation = Operations.Subtraction}});
+            historyServiceMock
+                .Setup(c => c.GetLast(id, CancellationToken.None))
+                .ReturnsAsync(new HistoryDto() {CalculatorId = id, OldValue = 0, NewValue = 10, Operation = Operations.Subtraction});
 
             historyServiceMock
                 .Setup(c => c.UpdateHistory(id, Operations.Subtraction, expectedOutput, CancellationToken.None))
@@ -120,13 +122,13 @@ namespace CalculatorServices.Tests
 
 
             var service = new SubtractionService(repositoryMock.Object, historyServiceMock.Object);
-            var result = await service.Subtract(1, value, CancellationToken.None);
+            var result = await service.Subtract(id, value, CancellationToken.None);
 
             mockDbSet.Verify(c => c.AddAsync(It.IsAny<SubtractionAuditRecord>(), CancellationToken.None), Times.Once);
-            historyServiceMock.Verify(c => c.Get(It.IsAny<int>(), CancellationToken.None), Times.Once);
+            historyServiceMock.Verify(c => c.GetLast(It.IsAny<Guid>(), CancellationToken.None), Times.Once);
 
             Assert.AreEqual(expectedOutput, result.Result);
-            Assert.AreEqual(1, result.GlobalId);
+            Assert.AreEqual(id, result.GlobalId);
         }
     }
 }
