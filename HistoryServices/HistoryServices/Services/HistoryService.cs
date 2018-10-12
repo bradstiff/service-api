@@ -36,7 +36,7 @@ namespace HistoryServices.Services
                 record.OldValue = last.NewValue;
             }
 
-            HistoryRepository.Insert(record);
+            HistoryRepository.Add(record);
             await HistoryRepository.SaveChangesAsync(cancellationToken);
             return record.ToViewModel();
         }
@@ -49,7 +49,8 @@ namespace HistoryServices.Services
 
         public async Task<HistoryViewModel> GetLast(string key, CancellationToken cancellationToken)
         {
-            return (await HistoryRepository.GetLast(key, cancellationToken)).ToViewModel();
+            var result = await HistoryRepository.GetLast(key, cancellationToken);
+            return result?.ToViewModel();
         }
     }
 }

@@ -26,7 +26,7 @@ namespace HistoryServices.Data
             return await this.Histories.Where(h => h.Key == key).OrderByDescending(h => h.Id).FirstOrDefaultAsync(cancellationToken);
         }
 
-        public void Insert(HistoryRecord history)
+        public void Add(HistoryRecord history)
         {
             this.Histories.Add(history);
         }
