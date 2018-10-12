@@ -26,9 +26,10 @@ namespace HistoryServices.Data
             return await this.Histories.Where(h => h.Key == key).OrderByDescending(h => h.Id).FirstOrDefaultAsync(cancellationToken);
         }
 
-        public void Add(HistoryRecord history)
+        public async Task Add(HistoryRecord history, CancellationToken cancellationToken)
         {
             this.Histories.Add(history);
+            await this.SaveChangesAsync(cancellationToken);
         }
     }
 }

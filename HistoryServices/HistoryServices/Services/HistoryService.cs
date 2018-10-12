@@ -36,8 +36,8 @@ namespace HistoryServices.Services
                 record.OldValue = last.NewValue;
             }
 
-            HistoryRepository.Add(record);
-            await HistoryRepository.SaveChangesAsync(cancellationToken);
+            await HistoryRepository.Add(record, cancellationToken);
+
             return record.ToViewModel();
         }
 
