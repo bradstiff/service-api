@@ -13,6 +13,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Formatting;
 using System.Collections.Generic;
+using System.Net;
 
 namespace HistoryServices.Tests
 {
@@ -82,8 +83,75 @@ namespace HistoryServices.Tests
             var first = all.First();
             var last = all.Last();
 
+            Assert.IsNull(first.OldValue);
             Assert.AreEqual(first.NewValue, last.OldValue);
             Assert.AreNotEqual(first.Id, last.Id);
+        }
+
+        [TestMethod]
+        public async Task Add_No_Key_Should_Fail()
+        {
+            var value = new HistoryViewModel
+            {
+                Operation = "add",
+                NewValue = "5",
+            };
+            var result = await this.Add(string.Empty, value);
+            Assert.AreEqual(HttpStatusCode.NotFound, result.StatusCode);
+        }
+
+        [TestMethod]
+        public async Task Add_No_Value_Should_Fail()
+        {
+            var key = $"Calculator[{Guid.NewGuid()}]";
+            var result = await this.Add(key, null);
+            Assert.AreEqual(HttpStatusCode.BadRequest, result.StatusCode);
+        }
+
+        [TestMethod]
+        public async Task Add_No_Operation_Should_Fail()
+        {
+            var key = $"Calculator[{Guid.NewGuid()}]";
+            var value = new HistoryViewModel
+            {
+                Operation = string.Empty,
+                NewValue = "5",
+            };
+            var result = await this.Add(key, value);
+            Assert.AreEqual(HttpStatusCode.BadRequest, result.StatusCode);
+        }
+
+        [TestMethod]
+        public async Task GetLast_No_Key_Should_Fail()
+        {
+            var key = string.Empty;
+            var result = await this.GetLast(key);
+            Assert.AreEqual(HttpStatusCode.NotFound, result.StatusCode);
+        }
+
+        [TestMethod]
+        public async Task GetLast_No_History_Should_Fail()
+        {
+            var key = $"Calculator[{Guid.NewGuid()}]";
+            var result = await this.GetLast(key);
+            Assert.AreEqual(HttpStatusCode.NotFound, result.StatusCode);
+        }
+
+
+        [TestMethod]
+        public async Task GetAll_No_Key_Should_Fail()
+        {
+            var key = string.Empty;
+            var result = await this.GetAll(key);
+            Assert.AreEqual(HttpStatusCode.NotFound, result.StatusCode);
+        }
+
+        [TestMethod]
+        public async Task GetAll_No_History_Should_Fail()
+        {
+            var key = $"Calculator[{Guid.NewGuid()}]";
+            var result = await this.GetAll(key);
+            Assert.AreEqual(HttpStatusCode.NotFound, result.StatusCode);
         }
 
         private Task<HttpResponseMessage> Add(string key, HistoryViewModel value)
