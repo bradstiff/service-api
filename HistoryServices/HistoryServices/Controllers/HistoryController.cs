@@ -30,7 +30,13 @@ namespace HistoryServices.Controllers
             {
                 return BadRequest("Key is required.");
             }
-            return Ok(await HistoryService.GetAll(key, cancellationToken));
+
+            var result = await HistoryService.GetAll(key, cancellationToken);
+            if (result.Count() == 0)
+            {
+                return NotFound();
+            }
+            return Ok(result);
         }
 
         // GET: api/History/Calculator[1]/last
@@ -41,7 +47,13 @@ namespace HistoryServices.Controllers
             {
                 return BadRequest("Key is required.");
             }
-            return Ok(await HistoryService.GetLast(key, cancellationToken));
+
+            var result = await HistoryService.GetLast(key, cancellationToken);
+            if (result == null)
+            {
+                return NotFound();
+            }
+            return Ok(result);
         }
 
         // POST: api/History/Calculator[1]
