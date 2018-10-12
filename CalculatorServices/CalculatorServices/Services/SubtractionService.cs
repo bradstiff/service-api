@@ -18,12 +18,9 @@ namespace CalculatorServices.Services
 
     public class SubtractionService : BaseCalculatorService<SubtractionAuditRecord>, ISubtractionService
     {
-        private readonly IAuditRepository<SubtractionAuditRecord> _repository;
-
-        public SubtractionService(IAuditRepository<SubtractionAuditRecord> repository, IHistoryClient historyService)
-            :base(repository, historyService)
+        public SubtractionService(ICalculatorRepository calculatorRepository, IAuditRepository<SubtractionAuditRecord> auditRepository, IHistoryClient historyService)
+            : base(calculatorRepository, auditRepository, historyService)
         {
-            _repository = repository;
         }
 
         public Task<CalculatorResultViewModel> Subtract(Guid? id, decimal value, CancellationToken cancellationToken)

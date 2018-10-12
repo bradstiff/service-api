@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using CalculatorServices.Data;
 using CalculatorServices.Data.Core;
 using CalculatorServices.ViewModels;
 using Microsoft.EntityFrameworkCore;
@@ -10,54 +11,61 @@ namespace CalculatorServices.Services.Core
     public abstract class BaseCalculatorService<T>
         where T : BaseOperationAuditRecord, new()
     {
-        protected IAuditRepository<T> Repository { get; }
+        protected IAuditRepository<T> AuditRepository { get; }
+        protected ICalculatorRepository CalculatorRepository { get; }
 
         protected IHistoryClient HistoryService { get; }
 
-        protected BaseCalculatorService(IAuditRepository<T> repository, IHistoryClient historyService)
+        protected BaseCalculatorService(ICalculatorRepository calculatorRepository, IAuditRepository<T> auditRepository, IHistoryClient historyService)
         {
-            Repository = repository;
+            CalculatorRepository = calculatorRepository;
+            AuditRepository = auditRepository;
             HistoryService = historyService;
         }
 
-        public async Task<decimal?> GetLatestValue(Guid calculatorId, CancellationToken cancellationToken)
+        protected async Task<CalculatorResultViewModel> Execute(Guid? id, Operations operation, decimal value, CancellationToken cancellationToken)
         {
-            return (await this.HistoryService.GetLast(calculatorId, cancellationToken))?.NewValue;
-        }
-
-        protected async Task WriteToGlobalHistory(Guid calculatorId, Operations operation, decimal newValue, CancellationToken cancellationToken)
-        {
-            await this.HistoryService.UpdateHistory(calculatorId, operation, newValue, cancellationToken);
-        }
-
-        protected async Task<CalculatorResultViewModel> Execute(Guid? id, Operations operation, decimal value,
-            CancellationToken cancellationToken)
-        {
-            decimal oldValue = 0;
-            if (id.HasValue)
+            var isNew = id == null;
+            CalculatorRecord calculator;
+            if (isNew)
             {
-                oldValue = (await GetLatestValue(id.Value, cancellationToken)).GetValueOrDefault(0);
+                calculator = new CalculatorRecord
+                {
+                    Id = Guid.NewGuid(),
+                    Value = 0,
+                };
             }
             else
             {
-                id = Guid.NewGuid();
+                calculator = await this.CalculatorRepository.Find(id.Value, cancellationToken);
             }
 
+            var oldValue = calculator.Value;
             var result = CalculateResult(operation, oldValue, value);
+            calculator.Value = result;
 
             var audit = new T()
             {
-                CalculatorId = id.Value,
+                CalculatorId = calculator.Id,
                 NewValue = result,
                 OldValue = oldValue
             };
 
-            //these can occur in parallel
-            var repositoryTask = this.Repository.AddAudit(audit, cancellationToken);
-            var historyTask = this.WriteToGlobalHistory(id.Value, operation, result, cancellationToken);
-            await Task.WhenAll(repositoryTask, historyTask);
+            Task repositoryTask;
+            if (isNew)
+            {
+                repositoryTask = this.CalculatorRepository.Add(calculator, cancellationToken);
+            }
+            else
+            {
+                repositoryTask = this.CalculatorRepository.Update(calculator, cancellationToken);
+            }
+            var auditTask = this.AuditRepository.AddAudit(audit, cancellationToken);
+            var historyTask = this.HistoryService.UpdateHistory(calculator.Id, operation, result, cancellationToken);
 
-            return new CalculatorResultViewModel() { GlobalId = id.Value, Result = result };
+            await Task.WhenAll(repositoryTask, auditTask, historyTask);
+
+            return new CalculatorResultViewModel() { GlobalId = calculator.Id, Result = result };
         }
 
         private decimal CalculateResult(Operations operation, decimal oldValue, decimal value)
