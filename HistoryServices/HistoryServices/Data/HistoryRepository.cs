@@ -10,11 +10,11 @@ namespace HistoryServices.Data
 {
     public class HistoryRepository : DbContext, IHistoryRepository
     {
-        private DbSet<HistoryRecord> Histories { get; set; }
-
         public HistoryRepository(DbContextOptions options)
             : base(options)
         { }
+
+        public DbSet<HistoryRecord> Histories { get; set; }
 
         public async Task<IEnumerable<HistoryRecord>> GetAll(string key, CancellationToken cancellationToken)
         {
