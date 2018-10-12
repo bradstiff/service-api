@@ -54,16 +54,19 @@ namespace CalculatorServices.Services.Core
                 OldValue = oldValue
             };
 
-            var dbSet = GetDbSet();
-
-            await dbSet.AddAsync(audit, cancellationToken);
-
-            await Repository.SaveChangesAsync(cancellationToken);
-
-            //id = await WriteToGlobalHistory(id, operation, value, result, cancellationToken);
-            await WriteToGlobalHistory(id.Value, operation, result, cancellationToken);
+            //these can occur in parallel
+            var repositoryTask = this.WriteToRepository(audit, cancellationToken);
+            var historyTask = this.WriteToGlobalHistory(id.Value, operation, result, cancellationToken);
+            await Task.WhenAll(repositoryTask, historyTask);
 
             return new CalculatorResultViewModel() { GlobalId = id.Value, Result = result };
+        }
+
+        private async Task WriteToRepository(T auditRecord, CancellationToken cancellationToken)
+        {
+            var dbSet = GetDbSet();
+            await dbSet.AddAsync(auditRecord, cancellationToken);
+            await Repository.SaveChangesAsync(cancellationToken);
         }
 
         private decimal CalculateResult(Operations operation, decimal oldValue, decimal value)
