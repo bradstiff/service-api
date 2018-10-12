@@ -20,9 +20,9 @@ namespace CalculatorServices.Tests
         [TestMethod]
         public async Task AdditionService_Add_Should_Pass()
         {
-            var historyServiceMock = new Mock<IHistoryService>();
+            var historyServiceMock = new Mock<IHistoryClient>();
 
-            var repositoryMock = new Mock<ICalculatorRepository<AdditionAuditRecord>>();
+            var repositoryMock = new Mock<IAuditRepository<AdditionAuditRecord>>();
             var mockDbSet = new Mock<DbSet<AdditionAuditRecord>>();
             repositoryMock.Setup(c => c.Audits).Returns(mockDbSet.Object);
 
@@ -45,8 +45,8 @@ namespace CalculatorServices.Tests
         [TestMethod]
         public async Task AdditionService_Add_Existing_Id_Should_Pass()
         {
-            var repositoryMock = new Mock<ICalculatorRepository<AdditionAuditRecord>>();
-            var historyServiceMock = new Mock<IHistoryService>();
+            var repositoryMock = new Mock<IAuditRepository<AdditionAuditRecord>>();
+            var historyServiceMock = new Mock<IHistoryClient>();
 
             var mockDbSet = new Mock<DbSet<AdditionAuditRecord>>();
             repositoryMock.Setup(c => c.Audits).Returns(mockDbSet.Object);
@@ -78,8 +78,8 @@ namespace CalculatorServices.Tests
         [TestMethod]
         public async Task SubtractionService_Subtract_Should_Pass()
         {
-            var repositoryMock = new Mock<ICalculatorRepository<SubtractionAuditRecord>>();
-            var historyServiceMock = new Mock<IHistoryService>();
+            var repositoryMock = new Mock<IAuditRepository<SubtractionAuditRecord>>();
+            var historyServiceMock = new Mock<IHistoryClient>();
 
             var mockDbSet = new Mock<DbSet<SubtractionAuditRecord>>();
             repositoryMock.Setup(c => c.Audits).Returns(mockDbSet.Object);
@@ -103,8 +103,8 @@ namespace CalculatorServices.Tests
         [TestMethod]
         public async Task SubtractionService_Subtract_Existing_Id_Should_Pass()
         {
-            var repositoryMock = new Mock<ICalculatorRepository<SubtractionAuditRecord>>();
-            var historyServiceMock = new Mock<IHistoryService>();
+            var repositoryMock = new Mock<IAuditRepository<SubtractionAuditRecord>>();
+            var historyServiceMock = new Mock<IHistoryClient>();
 
             var mockDbSet = new Mock<DbSet<SubtractionAuditRecord>>();
             repositoryMock.Setup(c => c.Audits).Returns(mockDbSet.Object);

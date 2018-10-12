@@ -10,11 +10,11 @@ namespace CalculatorServices.Services.Core
     public abstract class BaseCalculatorService<T>
         where T : BaseOperationAuditRecord, new()
     {
-        protected ICalculatorRepository<T> Repository { get; }
+        protected IAuditRepository<T> Repository { get; }
 
-        protected IHistoryService HistoryService { get; }
+        protected IHistoryClient HistoryService { get; }
 
-        protected BaseCalculatorService(ICalculatorRepository<T> repository, IHistoryService historyService)
+        protected BaseCalculatorService(IAuditRepository<T> repository, IHistoryClient historyService)
         {
             Repository = repository;
             HistoryService = historyService;

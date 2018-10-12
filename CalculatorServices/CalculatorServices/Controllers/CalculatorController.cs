@@ -14,11 +14,11 @@ namespace CalculatorServices.Controllers
     {
         private readonly IAdditionService _additionService;
         private readonly ISubtractionService _subtractionService;
-        private readonly IHistoryService _historyService;
+        private readonly IHistoryClient _historyService;
 
         public CalculatorController(IAdditionService additionService,
             ISubtractionService subtractionService,
-            IHistoryService historyService)
+            IHistoryClient historyService)
         {
             _additionService = additionService;
             _subtractionService = subtractionService;

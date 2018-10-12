@@ -18,9 +18,9 @@ namespace CalculatorServices.Services
 
     public class AdditionService : BaseCalculatorService<AdditionAuditRecord>, IAdditionService
     {
-        private readonly ICalculatorRepository<AdditionAuditRecord> _repository;
+        private readonly IAuditRepository<AdditionAuditRecord> _repository;
 
-        public AdditionService(ICalculatorRepository<AdditionAuditRecord> repository, IHistoryService historyService)
+        public AdditionService(IAuditRepository<AdditionAuditRecord> repository, IHistoryClient historyService)
             : base(repository, historyService)
         {
             _repository = repository;

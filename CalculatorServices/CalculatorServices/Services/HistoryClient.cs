@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace CalculatorServices.Services
 {
-    public interface IHistoryService
+    public interface IHistoryClient
     {
         Task<CalculatorHistoryViewModel> Get(Guid calculatorId, CancellationToken cancellationToken);
         Task<HistoryDto> GetLast(Guid calculatorId, CancellationToken cancellationToken);
@@ -18,9 +18,9 @@ namespace CalculatorServices.Services
         Task<HistoryDto> UpdateHistory(Guid calculatorId, Operations operation, decimal newValue, CancellationToken cancellationToken);
     }
 
-    public class HistoryService : IHistoryService
+    public class HistoryClient : IHistoryClient
     {
-        public HistoryService(IConfiguration configuration)
+        public HistoryClient(IConfiguration configuration)
         {
             var historyBaseAddress = configuration.GetValue<string>("HistoryServiceBaseAddress");
             this.HttpClient= new HttpClient() { BaseAddress = new Uri(historyBaseAddress) };

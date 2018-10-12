@@ -8,12 +8,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CalculatorServices.Data
 {
-    public class CalculatorRepository<T> : DbContext, ICalculatorRepository<T>
+    public class AuditRepository<T> : DbContext, IAuditRepository<T>
         where T : BaseOperationAuditRecord, new()
     {
         public DbSet<T> Audits { get; set; }
 
-        public CalculatorRepository(DbContextOptions<CalculatorRepository<T>> options)
+        public AuditRepository(DbContextOptions<AuditRepository<T>> options)
             : base(options)
         { }
 

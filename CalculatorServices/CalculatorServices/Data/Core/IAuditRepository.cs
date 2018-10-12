@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CalculatorServices.Data.Core
 {
-    public interface ICalculatorRepository<T>
+    public interface IAuditRepository<T>
         where T : BaseOperationAuditRecord, new()
     {
         DbSet<T> Audits { get; set; }

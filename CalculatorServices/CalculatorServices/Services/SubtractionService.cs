@@ -18,9 +18,9 @@ namespace CalculatorServices.Services
 
     public class SubtractionService : BaseCalculatorService<SubtractionAuditRecord>, ISubtractionService
     {
-        private readonly ICalculatorRepository<SubtractionAuditRecord> _repository;
+        private readonly IAuditRepository<SubtractionAuditRecord> _repository;
 
-        public SubtractionService(ICalculatorRepository<SubtractionAuditRecord> repository, IHistoryService historyService)
+        public SubtractionService(IAuditRepository<SubtractionAuditRecord> repository, IHistoryClient historyService)
             :base(repository, historyService)
         {
             _repository = repository;
