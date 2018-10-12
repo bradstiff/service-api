@@ -53,16 +53,11 @@ namespace CalculatorServices.Services.Core
             };
 
             //these can occur in parallel
-            var repositoryTask = this.WriteToRepository(audit, cancellationToken);
+            var repositoryTask = this.Repository.AddAudit(audit, cancellationToken);
             var historyTask = this.WriteToGlobalHistory(id.Value, operation, result, cancellationToken);
             await Task.WhenAll(repositoryTask, historyTask);
 
             return new CalculatorResultViewModel() { GlobalId = id.Value, Result = result };
-        }
-
-        private async Task WriteToRepository(T auditRecord, CancellationToken cancellationToken)
-        {
-            await this.Repository.Add(auditRecord);
         }
 
         private decimal CalculateResult(Operations operation, decimal oldValue, decimal value)

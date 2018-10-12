@@ -9,6 +9,6 @@ namespace CalculatorServices.Data.Core
     {
         DbSet<T> Audits { get; set; }
 
-        Task Add(T auditRecord);
+        Task AddAudit(T auditRecord, CancellationToken cancellationToken);
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using CalculatorServices.Data.Core;
 using Microsoft.EntityFrameworkCore;
@@ -16,10 +17,10 @@ namespace CalculatorServices.Data
             : base(options)
         { }
 
-        public async Task Add(T auditRecord)
+        public async Task AddAudit(T auditRecord, CancellationToken cancellationToken)
         {
             this.Audits.Add(auditRecord);
-            await this.SaveChangesAsync();
+            await this.SaveChangesAsync(cancellationToken);
         }
     }
 }
