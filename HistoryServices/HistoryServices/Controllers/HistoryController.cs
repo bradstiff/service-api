@@ -26,6 +26,10 @@ namespace HistoryServices.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<HistoryViewModel>>> GetAll(string key, CancellationToken cancellationToken)
         {
+            if (string.IsNullOrWhiteSpace(key))
+            {
+                return BadRequest("Key is required.");
+            }
             return Ok(await HistoryService.GetAll(key, cancellationToken));
         }
 
@@ -33,6 +37,10 @@ namespace HistoryServices.Controllers
         [HttpGet("last")]
         public async Task<ActionResult<HistoryViewModel>> GetLast(string key, CancellationToken cancellationToken)
         {
+            if (string.IsNullOrWhiteSpace(key))
+            {
+                return BadRequest("Key is required.");
+            }
             return Ok(await HistoryService.GetLast(key, cancellationToken));
         }
 
@@ -40,6 +48,16 @@ namespace HistoryServices.Controllers
         [HttpPost]
         public async Task<ActionResult<HistoryViewModel>> Add(string key, [FromBody] HistoryViewModel value, CancellationToken cancellationToken)
         {
+            if (string.IsNullOrWhiteSpace(key))
+            {
+                return BadRequest("Key is required.");
+            }
+
+            if (string.IsNullOrWhiteSpace(value.Operation))
+            {
+                return BadRequest("Operation is required.");
+            }
+
             return Ok(await HistoryService.Add(key, value, cancellationToken));
         }
     }
