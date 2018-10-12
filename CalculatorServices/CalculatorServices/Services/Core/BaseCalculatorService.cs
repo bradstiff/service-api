@@ -49,6 +49,7 @@ namespace CalculatorServices.Services.Core
 
             var audit = new T()
             {
+                CalculatorId = id.Value,
                 NewValue = result,
                 OldValue = oldValue
             };
